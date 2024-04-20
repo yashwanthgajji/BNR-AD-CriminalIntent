@@ -13,7 +13,6 @@ import java.util.UUID
 class CrimeDetailFragment: Fragment() {
     private lateinit var binding: FragmentCrimeDetailBinding
     private lateinit var crime: Crime
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         crime = Crime(
@@ -29,21 +28,21 @@ class CrimeDetailFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentCrimeDetailBinding.inflate(inflater, container, false)
+        binding = FragmentCrimeDetailBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState);
+        super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            crimeTitle.doOnTextChanged { text, start, before, count ->
-                crime = crime.copy(title = text.toString());
+            crimeTitle.doOnTextChanged { text, _, _, _ ->
+                crime = crime.copy(title = text.toString())
             }
             crimeDate.apply {
                 text = crime.date.toString()
                 isEnabled = false
             }
-            crimeSolved.setOnCheckedChangeListener { buttonView, isChecked ->
+            crimeSolved.setOnCheckedChangeListener { _, isChecked ->
                 crime = crime.copy(isSolved = isChecked)
             }
         }
