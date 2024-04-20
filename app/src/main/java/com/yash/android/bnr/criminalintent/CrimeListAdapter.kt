@@ -2,6 +2,7 @@ package com.yash.android.bnr.criminalintent
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.yash.android.bnr.criminalintent.databinding.ListItemCrimeBinding
@@ -17,13 +18,19 @@ class CrimeListAdapter(private val crimes: List<Crime>) : RecyclerView.Adapter<C
 
     override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
         val crime = crimes[position]
-        holder.apply {
-            binding.listItemCrimeTitle.text = crime.title
-            binding.listItemCrimeDate.text = crime.date.toString()
-        }
+        holder.bind(crime)
     }
 }
 
 class CrimeHolder(val binding: ListItemCrimeBinding) : ViewHolder(binding.root) {
-
+    fun bind(crime: Crime) {
+        binding.listItemCrimeTitle.text = crime.title
+        binding.listItemCrimeDate.text = crime.date.toString()
+        binding.root.setOnClickListener {
+            Toast.makeText(
+                binding.root.context,
+                "${crime.title} clicked!",
+                Toast.LENGTH_SHORT).show()
+        }
+    }
 }
