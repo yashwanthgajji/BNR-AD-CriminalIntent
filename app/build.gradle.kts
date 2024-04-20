@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.recyclerview)
     testImplementation(libs.junit)
     debugImplementation(libs.androidx.fragment.testing)
     androidTestImplementation(libs.androidx.junit)
