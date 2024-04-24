@@ -1,6 +1,7 @@
 package com.yash.android.bnr.criminalintent
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
@@ -48,6 +49,11 @@ class CrimeHolder(private val binding: ListItemCrimeBinding) : ViewHolder(bindin
         binding.apply {
             listItemCrimeTitle.text = crime.title
             listItemCrimeDate.text = crime.date.toString()
+            listItemCrimeSolved.visibility = if (crime.isSolved) {
+                View.VISIBLE
+            } else {
+                View.INVISIBLE
+            }
             root.setOnClickListener {
                 Toast.makeText(
                     root.context,
@@ -63,6 +69,13 @@ class SeriousCrimeHolder(private val binding: ListItemSeriousCrimeBinding) : Vie
         binding.apply {
             listItemCrimeTitle.text = crime.title
             listItemCrimeDate.text = crime.date.toString()
+            if (crime.isSolved) {
+                listItemCrimeSolved.visibility = View.VISIBLE
+                listItemContactPoliceButton.isEnabled = false
+            } else {
+                listItemCrimeSolved.visibility = View.INVISIBLE
+                listItemContactPoliceButton.isEnabled = true
+            }
             root.setOnClickListener {
                 Toast.makeText(
                     root.context,
