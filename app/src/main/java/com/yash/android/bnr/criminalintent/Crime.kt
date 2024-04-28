@@ -12,5 +12,8 @@ data class Crime (
     val title: String,
     val date: Date,
     val isSolved: Boolean,
-    val requiresPolice: Boolean
-)
+    @Ignore val requiresPolice: Boolean
+) {
+    constructor(id: UUID, title: String, date: Date, isSolved: Boolean) :
+            this(id, title, date, isSolved, false)
+}
