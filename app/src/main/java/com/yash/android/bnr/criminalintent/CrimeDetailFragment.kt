@@ -1,6 +1,7 @@
 package com.yash.android.bnr.criminalintent
 
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,7 +45,7 @@ class CrimeDetailFragment: Fragment() {
                 crime = crime.copy(title = text.toString())
             }
             crimeDate.apply {
-                text = crime.date.toString()
+                text = DateFormat.format("EEEE, MMMM dd, yyyy", crime.date)
                 isEnabled = false
             }
             crimeSolved.setOnCheckedChangeListener { _, isChecked ->
