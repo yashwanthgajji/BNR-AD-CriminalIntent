@@ -21,7 +21,7 @@ class CrimeListViewModel : ViewModel() {
         }
     }
 
-    private suspend fun loadCrimes(): List<Crime> {
+    suspend fun loadCrimes(): List<Crime> {
         val result = mutableListOf<Crime>()
         delay(5000)
         for (i in 0 until 100) {
