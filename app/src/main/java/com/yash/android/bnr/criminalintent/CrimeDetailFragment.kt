@@ -3,7 +3,6 @@ package com.yash.android.bnr.criminalintent
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +10,7 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -20,7 +20,6 @@ import androidx.navigation.fragment.navArgs
 import com.yash.android.bnr.criminalintent.databinding.FragmentCrimeDetailBinding
 import kotlinx.coroutines.launch
 import java.util.Date
-import java.util.UUID
 
 class CrimeDetailFragment: Fragment() {
     private var _binding: FragmentCrimeDetailBinding? = null
@@ -75,6 +74,11 @@ class CrimeDetailFragment: Fragment() {
                 }
             }
         }
+        setFragmentResultListener(DatePickerFragment.REQUEST_KEY_DATE) { requestKey, bundle ->
+            val newDate =
+                bundle.getSerializable(DatePickerFragment.BUNDLE_KEY_DATE) as Date
+            crimeDetailViewModel.updateCrime { it.copy(date = newDate) }
+        }
     }
 
     private fun updateUi(crime: Crime) {
@@ -84,7 +88,7 @@ class CrimeDetailFragment: Fragment() {
             }
             crimeDate.text = crime.date.toString()
             crimeDate.setOnClickListener {
-                findNavController().navigate(CrimeDetailFragmentDirections.selectDate())
+                findNavController().navigate(CrimeDetailFragmentDirections.selectDate(crime.date))
             }
             crimeSolved.isChecked = crime.isSolved
         }
