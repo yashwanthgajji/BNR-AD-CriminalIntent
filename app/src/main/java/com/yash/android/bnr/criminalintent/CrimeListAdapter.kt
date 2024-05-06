@@ -8,8 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.yash.android.bnr.criminalintent.databinding.ListItemCrimeBinding
 import com.yash.android.bnr.criminalintent.databinding.ListItemSeriousCrimeBinding
+import java.util.UUID
 
-class CrimeListAdapter(private val crimes: List<Crime>) : RecyclerView.Adapter<ViewHolder>() {
+class CrimeListAdapter(
+    private val crimes: List<Crime>,
+    private val onCrimeClicked: (crimeId: UUID) -> Unit
+) : RecyclerView.Adapter<ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return if (viewType == R.layout.list_item_crime) {
@@ -27,10 +31,10 @@ class CrimeListAdapter(private val crimes: List<Crime>) : RecyclerView.Adapter<V
         val crime = crimes[position]
         if (holder.itemViewType == R.layout.list_item_crime) {
             val crimeHolder: CrimeHolder = holder as CrimeHolder
-            crimeHolder.bind(crime)
+            crimeHolder.bind(crime, onCrimeClicked)
         } else {
             val seriousCrimeHolder: SeriousCrimeHolder = holder as SeriousCrimeHolder
-            seriousCrimeHolder.bind(crime)
+            seriousCrimeHolder.bind(crime, onCrimeClicked)
         }
     }
 
@@ -45,7 +49,7 @@ class CrimeListAdapter(private val crimes: List<Crime>) : RecyclerView.Adapter<V
 }
 
 class CrimeHolder(private val binding: ListItemCrimeBinding) : ViewHolder(binding.root) {
-    fun bind(crime: Crime) {
+    fun bind(crime: Crime, onCrimeClicked: (crimeId: UUID) -> Unit) {
         binding.apply {
             listItemCrimeTitle.text = crime.title
             listItemCrimeDate.text = crime.date.toString()
@@ -55,17 +59,14 @@ class CrimeHolder(private val binding: ListItemCrimeBinding) : ViewHolder(bindin
                 View.INVISIBLE
             }
             root.setOnClickListener {
-                Toast.makeText(
-                    root.context,
-                    "${crime.title} clicked!",
-                    Toast.LENGTH_SHORT).show()
+                onCrimeClicked(crime.id)
             }
         }
     }
 }
 
 class SeriousCrimeHolder(private val binding: ListItemSeriousCrimeBinding) : ViewHolder(binding.root) {
-    fun bind(crime: Crime) {
+    fun bind(crime: Crime, onCrimeClicked: (crimeId: UUID) -> Unit) {
         binding.apply {
             listItemCrimeTitle.text = crime.title
             listItemCrimeDate.text = crime.date.toString()
@@ -77,11 +78,7 @@ class SeriousCrimeHolder(private val binding: ListItemSeriousCrimeBinding) : Vie
                 listItemContactPoliceButton.isEnabled = true
             }
             root.setOnClickListener {
-                Toast.makeText(
-                    root.context,
-                    "${crime.title} clicked!",
-                    Toast.LENGTH_SHORT
-                ).show()
+                onCrimeClicked(crime.id)
             }
             listItemContactPoliceButton.setOnClickListener {
                 Toast.makeText(

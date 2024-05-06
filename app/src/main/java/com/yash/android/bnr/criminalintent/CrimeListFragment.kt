@@ -9,13 +9,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yash.android.bnr.criminalintent.databinding.FragmentCrimeListBinding
 import kotlinx.coroutines.launch
 
 class CrimeListFragment : Fragment() {
     private val crimeListViewModel: CrimeListViewModel by viewModels()
-    private var _binding:FragmentCrimeListBinding ?= null
+    private var _binding: FragmentCrimeListBinding? = null
     private val binding
         get() = checkNotNull(_binding) {
             "Cannot access binding because it is null. Is view visible?"
@@ -36,7 +37,11 @@ class CrimeListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 crimeListViewModel.crimes.collect { crimes ->
-                    binding.crimeRecyclerView.adapter = CrimeListAdapter(crimes)
+                    binding.crimeRecyclerView.adapter = CrimeListAdapter(crimes) { crimeId ->
+                        findNavController().navigate(
+                            CrimeListFragmentDirections.showCrimeDetail(crimeId)
+                        )
+                    }
                 }
             }
         }
