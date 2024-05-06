@@ -8,10 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.yash.android.bnr.criminalintent.databinding.ListItemCrimeBinding
 import com.yash.android.bnr.criminalintent.databinding.ListItemSeriousCrimeBinding
+import java.util.UUID
 
 class CrimeListAdapter(
     private val crimes: List<Crime>,
-    private val onCrimeClicked: () -> Unit
+    private val onCrimeClicked: (crimeId: UUID) -> Unit
 ) : RecyclerView.Adapter<ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -48,7 +49,7 @@ class CrimeListAdapter(
 }
 
 class CrimeHolder(private val binding: ListItemCrimeBinding) : ViewHolder(binding.root) {
-    fun bind(crime: Crime, onCrimeClicked: () -> Unit) {
+    fun bind(crime: Crime, onCrimeClicked: (crimeId: UUID) -> Unit) {
         binding.apply {
             listItemCrimeTitle.text = crime.title
             listItemCrimeDate.text = crime.date.toString()
@@ -58,14 +59,14 @@ class CrimeHolder(private val binding: ListItemCrimeBinding) : ViewHolder(bindin
                 View.INVISIBLE
             }
             root.setOnClickListener {
-                onCrimeClicked()
+                onCrimeClicked(crime.id)
             }
         }
     }
 }
 
 class SeriousCrimeHolder(private val binding: ListItemSeriousCrimeBinding) : ViewHolder(binding.root) {
-    fun bind(crime: Crime, onCrimeClicked: () -> Unit) {
+    fun bind(crime: Crime, onCrimeClicked: (crimeId: UUID) -> Unit) {
         binding.apply {
             listItemCrimeTitle.text = crime.title
             listItemCrimeDate.text = crime.date.toString()
@@ -77,7 +78,7 @@ class SeriousCrimeHolder(private val binding: ListItemSeriousCrimeBinding) : Vie
                 listItemContactPoliceButton.isEnabled = true
             }
             root.setOnClickListener {
-                onCrimeClicked()
+                onCrimeClicked(crime.id)
             }
             listItemContactPoliceButton.setOnClickListener {
                 Toast.makeText(
