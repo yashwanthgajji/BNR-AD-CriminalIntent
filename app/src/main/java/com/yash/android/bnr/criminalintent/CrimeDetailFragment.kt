@@ -1,17 +1,21 @@
 package com.yash.android.bnr.criminalintent
 
+import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.yash.android.bnr.criminalintent.databinding.FragmentCrimeDetailBinding
 import kotlinx.coroutines.launch
@@ -36,6 +40,18 @@ class CrimeDetailFragment: Fragment() {
     ): View? {
         _binding = FragmentCrimeDetailBinding.inflate(layoutInflater, container, false)
         return binding.root
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        requireActivity().onBackPressedDispatcher.addCallback {
+            if (crimeDetailViewModel.crime.value?.title?.isBlank() == true) {
+                binding.crimeTitle.hint = "Add crime title!!!"
+                binding.crimeTitle.setHintTextColor(Color.RED)
+            } else {
+                findNavController().popBackStack()
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

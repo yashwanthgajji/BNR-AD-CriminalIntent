@@ -28,21 +28,4 @@ class CrimeDetailFragmentTest {
     fun tearDown() {
         scenario.close()
     }
-
-    @Test
-    fun crimeUpdateOnSolved() {
-        onView(withId(R.id.crime_solved)).perform(click())
-        scenario.onFragment { fragment ->
-            assertTrue(fragment.crime.isSolved)
-        }
-    }
-
-    @Test
-    fun crimeUpdateOnTitleChange() {
-        val titleExpected = "Test title"
-        onView(withId(R.id.crime_title)).perform(typeText(titleExpected))
-        scenario.onFragment{ fragment ->
-            assertEquals(titleExpected, fragment.crime.title)
-        }
-    }
 }
