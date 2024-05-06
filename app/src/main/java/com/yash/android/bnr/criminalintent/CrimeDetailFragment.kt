@@ -62,9 +62,6 @@ class CrimeDetailFragment: Fragment() {
                     oldCrime.copy(title = text.toString())
                 }
             }
-            crimeDate.apply {
-                isEnabled = false
-            }
             crimeSolved.setOnCheckedChangeListener { _, isChecked ->
                 crimeDetailViewModel.updateCrime { oldCrime ->
                     oldCrime.copy(isSolved = isChecked)
@@ -86,6 +83,9 @@ class CrimeDetailFragment: Fragment() {
                 crimeTitle.setText(crime.title)
             }
             crimeDate.text = crime.date.toString()
+            crimeDate.setOnClickListener {
+                findNavController().navigate(CrimeDetailFragmentDirections.selectDate())
+            }
             crimeSolved.isChecked = crime.isSolved
         }
     }
