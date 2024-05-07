@@ -67,6 +67,11 @@ class CrimeDetailFragment: Fragment() {
                     oldCrime.copy(isSolved = isChecked)
                 }
             }
+            crimeSerious.setOnCheckedChangeListener { _, isChecked ->
+                crimeDetailViewModel.updateCrime { oldCrime ->
+                    oldCrime.copy(requiresPolice = isChecked)
+                }
+            }
         }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -99,6 +104,7 @@ class CrimeDetailFragment: Fragment() {
                 findNavController().navigate(CrimeDetailFragmentDirections.selectTime(crime.date))
             }
             crimeSolved.isChecked = crime.isSolved
+            crimeSerious.isChecked = crime.requiresPolice
         }
     }
 

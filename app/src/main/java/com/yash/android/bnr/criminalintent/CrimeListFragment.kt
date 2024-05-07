@@ -1,7 +1,11 @@
 package com.yash.android.bnr.criminalintent
 
 import android.os.Bundle
+import android.view.ContextMenu
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -13,6 +17,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yash.android.bnr.criminalintent.databinding.FragmentCrimeListBinding
 import kotlinx.coroutines.launch
+import java.util.Date
+import java.util.UUID
 
 class CrimeListFragment : Fragment() {
     private val crimeListViewModel: CrimeListViewModel by viewModels()
@@ -21,6 +27,11 @@ class CrimeListFragment : Fragment() {
         get() = checkNotNull(_binding) {
             "Cannot access binding because it is null. Is view visible?"
         }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,6 +55,37 @@ class CrimeListFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_crime_list, menu)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.new_crime -> {
+                showNewCrime()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun showNewCrime() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val newCrime = Crime(
+                id = UUID.randomUUID(),
+                title = "",
+                date = Date(),
+                isSolved = false,
+                requiresPolice = false
+            )
+            crimeListViewModel.addCrime(newCrime)
+            findNavController().navigate(CrimeListFragmentDirections.showCrimeDetail(newCrime.id))
         }
     }
 

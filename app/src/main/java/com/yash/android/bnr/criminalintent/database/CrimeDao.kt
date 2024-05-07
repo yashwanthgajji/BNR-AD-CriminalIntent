@@ -1,6 +1,7 @@
 package com.yash.android.bnr.criminalintent.database
 
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.yash.android.bnr.criminalintent.Crime
@@ -15,4 +16,6 @@ interface CrimeDao {
     fun getCrime(id: UUID): Flow<Crime>
     @Update
     fun updateCrime(crime: Crime)
+    @Insert
+    suspend fun addCrime(crime: Crime)
 }
