@@ -3,6 +3,7 @@ package com.yash.android.bnr.criminalintent
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -86,9 +87,13 @@ class CrimeDetailFragment: Fragment() {
             if (crimeTitle.text.toString() != crime.title) {
                 crimeTitle.setText(crime.title)
             }
-            crimeDate.text = crime.date.toString()
+            crimeDate.text = DateFormat.format("EEEE, MMMM dd, yyyy", crime.date)
             crimeDate.setOnClickListener {
                 findNavController().navigate(CrimeDetailFragmentDirections.selectDate(crime.date))
+            }
+            crimeTime.text = DateFormat.format("hh:mm a", crime.date)
+            crimeTime.setOnClickListener {
+                findNavController().navigate(CrimeDetailFragmentDirections.selectTime(crime.date))
             }
             crimeSolved.isChecked = crime.isSolved
         }
