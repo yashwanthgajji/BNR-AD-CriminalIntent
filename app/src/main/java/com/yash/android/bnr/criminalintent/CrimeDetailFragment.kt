@@ -3,6 +3,7 @@ package com.yash.android.bnr.criminalintent
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -74,9 +75,12 @@ class CrimeDetailFragment: Fragment() {
                 }
             }
         }
-        setFragmentResultListener(DatePickerFragment.REQUEST_KEY_DATE) { requestKey, bundle ->
-            val newDate =
-                bundle.getSerializable(DatePickerFragment.BUNDLE_KEY_DATE) as Date
+        setFragmentResultListener(DatePickerFragment.REQUEST_KEY_DATE) { _, bundle ->
+            val newDate = bundle.getSerializable(DatePickerFragment.BUNDLE_KEY_DATE) as Date
+            crimeDetailViewModel.updateCrime { it.copy(date = newDate) }
+        }
+        setFragmentResultListener(TimePickerFragment.REQUEST_KEY_TIME) { _, bundle ->
+            val newDate = bundle.getSerializable(TimePickerFragment.BUNDLE_KEY_TIME) as Date
             crimeDetailViewModel.updateCrime { it.copy(date = newDate) }
         }
     }
@@ -86,9 +90,13 @@ class CrimeDetailFragment: Fragment() {
             if (crimeTitle.text.toString() != crime.title) {
                 crimeTitle.setText(crime.title)
             }
-            crimeDate.text = crime.date.toString()
+            crimeDate.text = DateFormat.format("EEEE, MMMM dd, yyyy", crime.date)
             crimeDate.setOnClickListener {
                 findNavController().navigate(CrimeDetailFragmentDirections.selectDate(crime.date))
+            }
+            crimeTime.text = DateFormat.format("hh:mm a", crime.date)
+            crimeTime.setOnClickListener {
+                findNavController().navigate(CrimeDetailFragmentDirections.selectTime(crime.date))
             }
             crimeSolved.isChecked = crime.isSolved
         }
