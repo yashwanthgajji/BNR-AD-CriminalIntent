@@ -95,6 +95,12 @@ class CrimeDetailFragment : Fragment() {
             val newDate = bundle.getSerializable(TimePickerFragment.BUNDLE_KEY_TIME) as Date
             crimeDetailViewModel.updateCrime { it.copy(date = newDate) }
         }
+        setFragmentResultListener(ConfirmDialogFragment.REQUEST_KEY_DELETE) { _, bundle ->
+            if (bundle.getBoolean(ConfirmDialogFragment.BUNDLE_KEY_DELETE)) {
+                crimeDetailViewModel.deleteCrime()
+                findNavController().popBackStack()
+            }
+        }
     }
 
     private fun updateUi(crime: Crime) {
@@ -129,15 +135,10 @@ class CrimeDetailFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.delete_crime -> {
-                deleteCrimeAndBack()
+                findNavController().navigate(CrimeDetailFragmentDirections.confirmDeletePopup())
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun deleteCrimeAndBack() {
-        crimeDetailViewModel.deleteCrime()
-        findNavController().popBackStack()
     }
 }
