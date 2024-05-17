@@ -7,4 +7,5 @@
     <string name="serious_crime">Serious Crime!</string>
     <string name="contact_police">Contact Police!</string>
     <string name="new_crime">New Crime</string>
+    <string name="no_crimes">There are no crimes</string>
 </resources>
