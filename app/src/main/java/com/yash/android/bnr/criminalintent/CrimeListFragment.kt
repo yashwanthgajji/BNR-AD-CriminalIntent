@@ -1,7 +1,6 @@
 package com.yash.android.bnr.criminalintent
 
 import android.os.Bundle
-import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -45,13 +44,26 @@ class CrimeListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.addNewCrimeButton.setOnClickListener { showNewCrime() }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 crimeListViewModel.crimes.collect { crimes ->
-                    binding.crimeRecyclerView.adapter = CrimeListAdapter(crimes) { crimeId ->
-                        findNavController().navigate(
-                            CrimeListFragmentDirections.showCrimeDetail(crimeId)
-                        )
+                    binding.apply {
+                        if (crimes.isEmpty()) {
+                            noCrimesText.visibility = View.VISIBLE
+                            addNewCrimeButton.visibility = View.VISIBLE
+                            crimeRecyclerView.visibility = View.INVISIBLE
+                        }
+                        else {
+                            noCrimesText.visibility = View.INVISIBLE
+                            addNewCrimeButton.visibility = View.INVISIBLE
+                            crimeRecyclerView.visibility = View.VISIBLE
+                            crimeRecyclerView.adapter = CrimeListAdapter(crimes) { crimeId ->
+                                findNavController().navigate(
+                                    CrimeListFragmentDirections.showCrimeDetail(crimeId)
+                                )
+                            }
+                        }
                     }
                 }
             }

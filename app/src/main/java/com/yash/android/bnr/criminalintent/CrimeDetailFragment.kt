@@ -4,8 +4,10 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.text.format.DateFormat
-import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
@@ -22,7 +24,7 @@ import com.yash.android.bnr.criminalintent.databinding.FragmentCrimeDetailBindin
 import kotlinx.coroutines.launch
 import java.util.Date
 
-class CrimeDetailFragment: Fragment() {
+class CrimeDetailFragment : Fragment() {
     private var _binding: FragmentCrimeDetailBinding? = null
     private val binding
         get() = checkNotNull(_binding) {
@@ -31,6 +33,11 @@ class CrimeDetailFragment: Fragment() {
     private val args: CrimeDetailFragmentArgs by navArgs()
     private val crimeDetailViewModel: CrimeDetailViewModel by viewModels {
         CrimeDetailViewModelFactory(args.crimeId)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -88,6 +95,12 @@ class CrimeDetailFragment: Fragment() {
             val newDate = bundle.getSerializable(TimePickerFragment.BUNDLE_KEY_TIME) as Date
             crimeDetailViewModel.updateCrime { it.copy(date = newDate) }
         }
+        setFragmentResultListener(ConfirmDialogFragment.REQUEST_KEY_DELETE) { _, bundle ->
+            if (bundle.getBoolean(ConfirmDialogFragment.BUNDLE_KEY_DELETE)) {
+                crimeDetailViewModel.deleteCrime()
+                findNavController().popBackStack()
+            }
+        }
     }
 
     private fun updateUi(crime: Crime) {
@@ -111,5 +124,21 @@ class CrimeDetailFragment: Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_crime_detail, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.delete_crime -> {
+                findNavController().navigate(CrimeDetailFragmentDirections.confirmDeletePopup())
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }
