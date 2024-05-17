@@ -1,6 +1,7 @@
 package com.yash.android.bnr.criminalintent
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.format.DateFormat
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 import java.util.Date
 
 private const val DATE_FORMAT = "EEEE, MMMM dd, yyyy"
+private const val TIME_FORMAT = "hh:mm a"
 class CrimeDetailFragment : Fragment() {
     private var _binding: FragmentCrimeDetailBinding? = null
     private val binding
@@ -113,12 +115,27 @@ class CrimeDetailFragment : Fragment() {
             crimeDate.setOnClickListener {
                 findNavController().navigate(CrimeDetailFragmentDirections.selectDate(crime.date))
             }
-            crimeTime.text = DateFormat.format("hh:mm a", crime.date)
+            crimeTime.text = DateFormat.format(TIME_FORMAT, crime.date)
             crimeTime.setOnClickListener {
                 findNavController().navigate(CrimeDetailFragmentDirections.selectTime(crime.date))
             }
             crimeSolved.isChecked = crime.isSolved
             crimeSerious.isChecked = crime.requiresPolice
+            crimeReport.setOnClickListener {
+                val reportIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, getCrimeReport(crime))
+                    putExtra(
+                        Intent.EXTRA_SUBJECT,
+                        getString(R.string.crime_report_subject)
+                    )
+                }
+                val chooserIntent = Intent.createChooser(
+                    reportIntent,
+                    getString(R.string.send_report)
+                )
+                startActivity(chooserIntent)
+            }
         }
     }
 
@@ -144,22 +161,30 @@ class CrimeDetailFragment : Fragment() {
     }
 
     private fun getCrimeReport(crime: Crime): String {
+        val dateString = DateFormat.format(DATE_FORMAT, crime.date).toString()
+        val timeString = DateFormat.format(TIME_FORMAT, crime.date).toString()
         val solvedString = when (crime.isSolved) {
             true -> getString(R.string.crime_report_solved)
             false -> getString(R.string.crime_report_unsolved)
         }
-        val dateString = DateFormat.format(DATE_FORMAT, crime.date).toString()
         val suspectString = if (crime.suspect.isBlank()) {
             getString(R.string.crime_report_no_suspect)
         } else {
             getString(R.string.crime_report_suspect, crime.suspect)
         }
+        val seriousString = if (crime.requiresPolice) {
+            getString(R.string.crime_report_serious)
+        } else {
+            getString(R.string.crime_report_non_serious)
+        }
         return getString(
             R.string.crime_report,
             crime.title,
             dateString,
+            timeString,
             solvedString,
-            suspectString
+            suspectString,
+            seriousString
         )
     }
 }
