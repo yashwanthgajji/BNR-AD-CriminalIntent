@@ -24,6 +24,7 @@ import com.yash.android.bnr.criminalintent.databinding.FragmentCrimeDetailBindin
 import kotlinx.coroutines.launch
 import java.util.Date
 
+private const val DATE_FORMAT = "EEEE, MMMM dd, yyyy"
 class CrimeDetailFragment : Fragment() {
     private var _binding: FragmentCrimeDetailBinding? = null
     private val binding
@@ -108,7 +109,7 @@ class CrimeDetailFragment : Fragment() {
             if (crimeTitle.text.toString() != crime.title) {
                 crimeTitle.setText(crime.title)
             }
-            crimeDate.text = DateFormat.format("EEEE, MMMM dd, yyyy", crime.date)
+            crimeDate.text = DateFormat.format(DATE_FORMAT, crime.date)
             crimeDate.setOnClickListener {
                 findNavController().navigate(CrimeDetailFragmentDirections.selectDate(crime.date))
             }
@@ -140,5 +141,25 @@ class CrimeDetailFragment : Fragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun getCrimeReport(crime: Crime): String {
+        val solvedString = when (crime.isSolved) {
+            true -> getString(R.string.crime_report_solved)
+            false -> getString(R.string.crime_report_unsolved)
+        }
+        val dateString = DateFormat.format(DATE_FORMAT, crime.date).toString()
+        val suspectString = if (crime.suspect.isBlank()) {
+            getString(R.string.crime_report_no_suspect)
+        } else {
+            getString(R.string.crime_report_suspect, crime.suspect)
+        }
+        return getString(
+            R.string.crime_report,
+            crime.title,
+            dateString,
+            solvedString,
+            suspectString
+        )
     }
 }
