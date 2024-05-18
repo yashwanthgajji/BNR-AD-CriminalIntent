@@ -2,6 +2,8 @@ package com.yash.android.bnr.criminalintent
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -59,6 +61,15 @@ class CrimeDetailFragment : Fragment() {
         }
     }
 
+    private fun canResolveIntent(intent: Intent): Boolean {
+        val packageManager: PackageManager = requireActivity().packageManager
+        val resolvedActivity: ResolveInfo? = packageManager.resolveActivity(
+            intent,
+            PackageManager.MATCH_DEFAULT_ONLY
+        )
+        return resolvedActivity != null
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -103,6 +114,8 @@ class CrimeDetailFragment : Fragment() {
                     oldCrime.copy(requiresPolice = isChecked)
                 }
             }
+            val selectSuspectIntent = selectSuspect.contract.createIntent(requireContext(), null)
+            crimeSuspect.isEnabled = canResolveIntent(selectSuspectIntent)
             crimeSuspect.setOnClickListener { selectSuspect.launch(null) }
         }
         viewLifecycleOwner.lifecycleScope.launch {
