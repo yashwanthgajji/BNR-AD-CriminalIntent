@@ -1,8 +1,13 @@
 package com.yash.android.bnr.criminalintent
 
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.Menu
@@ -11,6 +16,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -24,6 +30,9 @@ import com.yash.android.bnr.criminalintent.databinding.FragmentCrimeDetailBindin
 import kotlinx.coroutines.launch
 import java.util.Date
 
+private const val DATE_FORMAT = "EEEE, MMMM dd, yyyy"
+private const val TIME_FORMAT = "hh:mm a"
+
 class CrimeDetailFragment : Fragment() {
     private var _binding: FragmentCrimeDetailBinding? = null
     private val binding
@@ -33,6 +42,32 @@ class CrimeDetailFragment : Fragment() {
     private val args: CrimeDetailFragmentArgs by navArgs()
     private val crimeDetailViewModel: CrimeDetailViewModel by viewModels {
         CrimeDetailViewModelFactory(args.crimeId)
+    }
+    private val selectSuspect = registerForActivityResult(
+        ActivityResultContracts.PickContact()
+    ) { uri -> uri?.let { parseContactSelection(it) } }
+
+    private fun parseContactSelection(contactsUri: Uri) {
+        val queryFields = arrayOf(ContactsContract.Contacts.DISPLAY_NAME)
+        val queryCursor =
+            requireActivity().contentResolver.query(contactsUri, queryFields, null, null, null)
+        queryCursor?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val suspect = cursor.getString(0)
+                crimeDetailViewModel.updateCrime { oldCrime ->
+                    oldCrime.copy(suspect = suspect)
+                }
+            }
+        }
+    }
+
+    private fun canResolveIntent(intent: Intent): Boolean {
+        val packageManager: PackageManager = requireActivity().packageManager
+        val resolvedActivity: ResolveInfo? = packageManager.resolveActivity(
+            intent,
+            PackageManager.MATCH_DEFAULT_ONLY
+        )
+        return resolvedActivity != null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,6 +114,9 @@ class CrimeDetailFragment : Fragment() {
                     oldCrime.copy(requiresPolice = isChecked)
                 }
             }
+            val selectSuspectIntent = selectSuspect.contract.createIntent(requireContext(), null)
+            crimeSuspect.isEnabled = canResolveIntent(selectSuspectIntent)
+            crimeSuspect.setOnClickListener { selectSuspect.launch(null) }
         }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -108,16 +146,32 @@ class CrimeDetailFragment : Fragment() {
             if (crimeTitle.text.toString() != crime.title) {
                 crimeTitle.setText(crime.title)
             }
-            crimeDate.text = DateFormat.format("EEEE, MMMM dd, yyyy", crime.date)
+            crimeDate.text = DateFormat.format(DATE_FORMAT, crime.date)
             crimeDate.setOnClickListener {
                 findNavController().navigate(CrimeDetailFragmentDirections.selectDate(crime.date))
             }
-            crimeTime.text = DateFormat.format("hh:mm a", crime.date)
+            crimeTime.text = DateFormat.format(TIME_FORMAT, crime.date)
             crimeTime.setOnClickListener {
                 findNavController().navigate(CrimeDetailFragmentDirections.selectTime(crime.date))
             }
             crimeSolved.isChecked = crime.isSolved
             crimeSerious.isChecked = crime.requiresPolice
+            crimeSuspect.text = crime.suspect.ifEmpty { getString(R.string.crime_suspect_text) }
+            crimeReport.setOnClickListener {
+                val reportIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, getCrimeReport(crime))
+                    putExtra(
+                        Intent.EXTRA_SUBJECT,
+                        getString(R.string.crime_report_subject)
+                    )
+                }
+                val chooserIntent = Intent.createChooser(
+                    reportIntent,
+                    getString(R.string.send_report)
+                )
+                startActivity(chooserIntent)
+            }
         }
     }
 
@@ -138,7 +192,36 @@ class CrimeDetailFragment : Fragment() {
                 findNavController().navigate(CrimeDetailFragmentDirections.confirmDeletePopup())
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun getCrimeReport(crime: Crime): String {
+        val dateString = DateFormat.format(DATE_FORMAT, crime.date).toString()
+        val timeString = DateFormat.format(TIME_FORMAT, crime.date).toString()
+        val solvedString = when (crime.isSolved) {
+            true -> getString(R.string.crime_report_solved)
+            false -> getString(R.string.crime_report_unsolved)
+        }
+        val suspectString = if (crime.suspect.isBlank()) {
+            getString(R.string.crime_report_no_suspect)
+        } else {
+            getString(R.string.crime_report_suspect, crime.suspect)
+        }
+        val seriousString = if (crime.requiresPolice) {
+            getString(R.string.crime_report_serious)
+        } else {
+            getString(R.string.crime_report_non_serious)
+        }
+        return getString(
+            R.string.crime_report,
+            crime.title,
+            dateString,
+            timeString,
+            solvedString,
+            suspectString,
+            seriousString
+        )
     }
 }
