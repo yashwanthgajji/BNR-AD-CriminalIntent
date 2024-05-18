@@ -15,8 +15,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -28,6 +30,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.yash.android.bnr.criminalintent.databinding.FragmentCrimeDetailBinding
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.Date
 
 private const val DATE_FORMAT = "EEEE, MMMM dd, yyyy"
@@ -43,9 +46,19 @@ class CrimeDetailFragment : Fragment() {
     private val crimeDetailViewModel: CrimeDetailViewModel by viewModels {
         CrimeDetailViewModelFactory(args.crimeId)
     }
+    private var photoName: String? = null
     private val selectSuspect = registerForActivityResult(
         ActivityResultContracts.PickContact()
     ) { uri -> uri?.let { parseContactSelection(it) } }
+    private val takePhoto = registerForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { didTakePhoto ->
+        if (didTakePhoto && photoName != null) {
+            crimeDetailViewModel.updateCrime { oldCrime ->
+                oldCrime.copy(photoFileName = photoName)
+            }
+        }
+    }
 
     private fun parseContactSelection(contactsUri: Uri) {
         val queryFields = arrayOf(ContactsContract.Contacts.DISPLAY_NAME)
@@ -62,6 +75,7 @@ class CrimeDetailFragment : Fragment() {
     }
 
     private fun canResolveIntent(intent: Intent): Boolean {
+        intent.addCategory(Intent.CATEGORY_HOME)
         val packageManager: PackageManager = requireActivity().packageManager
         val resolvedActivity: ResolveInfo? = packageManager.resolveActivity(
             intent,
@@ -114,9 +128,24 @@ class CrimeDetailFragment : Fragment() {
                     oldCrime.copy(requiresPolice = isChecked)
                 }
             }
+            crimeSuspect.setOnClickListener { selectSuspect.launch(null) }
             val selectSuspectIntent = selectSuspect.contract.createIntent(requireContext(), null)
             crimeSuspect.isEnabled = canResolveIntent(selectSuspectIntent)
-            crimeSuspect.setOnClickListener { selectSuspect.launch(null) }
+            crimeCamera.setOnClickListener {
+                photoName = "IMG_${Date()}.JPG"
+                val photoFile = File(
+                    requireContext().applicationContext.filesDir,
+                    photoName
+                )
+                val photoUri = FileProvider.getUriForFile(
+                    requireContext(),
+                    "com.yash.android.bnr.criminalintent.fileprovider",
+                    photoFile
+                )
+                takePhoto.launch(photoUri)
+            }
+            val captureImageIntent = takePhoto.contract.createIntent(requireContext(), Uri.EMPTY)
+            crimeCamera.isEnabled = canResolveIntent(captureImageIntent)
         }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
