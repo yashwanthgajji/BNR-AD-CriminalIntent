@@ -15,10 +15,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.core.view.doOnLayout
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -75,13 +75,35 @@ class CrimeDetailFragment : Fragment() {
     }
 
     private fun canResolveIntent(intent: Intent): Boolean {
-        intent.addCategory(Intent.CATEGORY_HOME)
+//        intent.addCategory(Intent.CATEGORY_HOME)
         val packageManager: PackageManager = requireActivity().packageManager
         val resolvedActivity: ResolveInfo? = packageManager.resolveActivity(
             intent,
             PackageManager.MATCH_DEFAULT_ONLY
         )
         return resolvedActivity != null
+    }
+
+    private fun updatePhoto(photoFileName: String?) {
+        if (binding.crimePhoto.tag != photoFileName) {
+            val photoFile = photoFileName?.let {
+                File(requireContext().applicationContext.filesDir, it)
+            }
+            if (photoFile?.exists() == true) {
+                binding.crimePhoto.doOnLayout { measuredView ->
+                    val scaledBitmap = PictureUtils.getScaledBitmap(
+                        photoFile.path,
+                        measuredView.width,
+                        measuredView.height
+                    )
+                    binding.crimePhoto.setImageBitmap(scaledBitmap)
+                    binding.crimePhoto.tag = photoFileName
+                }
+            } else {
+                binding.crimePhoto.setImageBitmap(null)
+                binding.crimePhoto.tag = null
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -186,6 +208,7 @@ class CrimeDetailFragment : Fragment() {
             crimeSolved.isChecked = crime.isSolved
             crimeSerious.isChecked = crime.requiresPolice
             crimeSuspect.text = crime.suspect.ifEmpty { getString(R.string.crime_suspect_text) }
+            updatePhoto(crime.photoFileName)
             crimeReport.setOnClickListener {
                 val reportIntent = Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
