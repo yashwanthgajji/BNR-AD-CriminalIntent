@@ -61,6 +61,19 @@ class CrimeHolder(private val binding: ListItemCrimeBinding) : ViewHolder(bindin
             root.setOnClickListener {
                 onCrimeClicked(crime.id)
             }
+            root.contentDescription = if (crime.isSolved) {
+                 root.context.getString(
+                    R.string.crime_list_item_solved_description,
+                    crime.title,
+                    crime.date.toString()
+                )
+            } else {
+                root.context.getString(
+                    R.string.crime_list_item_unsolved_description,
+                    crime.title,
+                    crime.date.toString()
+                )
+            }
         }
     }
 }
@@ -80,12 +93,36 @@ class SeriousCrimeHolder(private val binding: ListItemSeriousCrimeBinding) : Vie
             root.setOnClickListener {
                 onCrimeClicked(crime.id)
             }
+            root.contentDescription = if (crime.isSolved) {
+                root.context.getString(
+                    R.string.crime_list_item_solved_description,
+                    crime.title,
+                    crime.date.toString()
+                )
+            } else {
+                root.context.getString(
+                    R.string.crime_list_item_unsolved_description,
+                    crime.title,
+                    crime.date.toString()
+                )
+            }
             listItemContactPoliceButton.setOnClickListener {
                 Toast.makeText(
                     root.context,
                     "Police on the way to address ${crime.title}",
                     Toast.LENGTH_SHORT
                 ).show()
+            }
+            if (crime.isSolved) {
+                listItemContactPoliceButton.contentDescription = root.context.getString(
+                    R.string.contact_police_button_solved_description,
+                    crime.title
+                )
+            } else {
+                listItemContactPoliceButton.contentDescription = root.context.getString(
+                    R.string.contact_police_button_unsolved_description,
+                    crime.title
+                )
             }
         }
     }

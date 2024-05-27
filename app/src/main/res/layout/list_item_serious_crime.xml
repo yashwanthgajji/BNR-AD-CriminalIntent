@@ -54,5 +54,6 @@
         app:layout_constraintBottom_toTopOf="@id/list_item_contact_police_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_solved" />
+        app:srcCompat="@drawable/ic_solved"
+        android:contentDescription="@string/crime_list_handcuffs_description" />
 </androidx.constraintlayout.widget.ConstraintLayout>
