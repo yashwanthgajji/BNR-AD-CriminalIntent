@@ -53,16 +53,28 @@
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
         android:text="@string/crime_detail_label" />
+    <TextView
+        android:id="@+id/crime_date_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        android:labelFor="@id/crime_date"/>
     <Button
         android:id="@+id/crime_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Wed Apr 17"/>
+        android:text="Select crime date"/>
+    <TextView
+        android:id="@+id/crime_time_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Time"
+        android:labelFor="@id/crime_time"/>
     <Button
         android:id="@+id/crime_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="16:56 EST 2024"/>
+        android:text="Select crime time"/>
     <CheckBox
         android:id="@+id/crime_solved"
         android:layout_width="match_parent"
@@ -73,6 +85,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/serious_crime"/>
+    <TextView
+        android:id="@+id/crime_suspect_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Suspect"
+        android:labelFor="@id/crime_suspect"/>
     <Button
         android:id="@+id/crime_suspect"
         android:layout_width="match_parent"

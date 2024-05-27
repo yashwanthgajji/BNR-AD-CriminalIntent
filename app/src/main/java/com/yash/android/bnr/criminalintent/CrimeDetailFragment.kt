@@ -203,17 +203,20 @@ class CrimeDetailFragment : Fragment() {
             if (crimeTitle.text.toString() != crime.title) {
                 crimeTitle.setText(crime.title)
             }
-            crimeDate.text = DateFormat.format(DATE_FORMAT, crime.date)
+            crimeDateLabel.text = DateFormat.format(DATE_FORMAT, crime.date)
             crimeDate.setOnClickListener {
                 findNavController().navigate(CrimeDetailFragmentDirections.selectDate(crime.date))
             }
-            crimeTime.text = DateFormat.format(TIME_FORMAT, crime.date)
+            crimeTimeLabel.text = DateFormat.format(TIME_FORMAT, crime.date)
             crimeTime.setOnClickListener {
                 findNavController().navigate(CrimeDetailFragmentDirections.selectTime(crime.date))
             }
             crimeSolved.isChecked = crime.isSolved
             crimeSerious.isChecked = crime.requiresPolice
-            crimeSuspect.text = crime.suspect.ifEmpty { getString(R.string.crime_suspect_text) }
+            if (crime.suspect.isNotEmpty()) {
+                crimeSuspectLabel.text = crime.suspect
+            }
+//            crimeSuspect.text = crime.suspect.ifEmpty { getString(R.string.crime_suspect_text) }
             updatePhoto(crime.photoFileName)
             crimeReport.setOnClickListener {
                 val reportIntent = Intent(Intent.ACTION_SEND).apply {
