@@ -96,12 +96,18 @@ class CrimeDetailFragment : Fragment() {
                         measuredView.width,
                         measuredView.height
                     )
-                    binding.crimePhoto.setImageBitmap(scaledBitmap)
-                    binding.crimePhoto.tag = photoFileName
+                    binding.crimePhoto.apply {
+                        setImageBitmap(scaledBitmap)
+                        tag = photoFileName
+                        contentDescription = getString(R.string.crime_photo_image_description)
+                    }
                 }
             } else {
-                binding.crimePhoto.setImageBitmap(null)
-                binding.crimePhoto.tag = null
+                binding.crimePhoto.apply {
+                    setImageBitmap(null)
+                    tag = null
+                    contentDescription = getString(R.string.crime_photo_no_image_description)
+                }
             }
         }
     }
