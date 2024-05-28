@@ -20,9 +20,12 @@
 
 ## Screenshots
 
-<img src="screenshots/emptyListScreenshot.jpg" width="200">&emsp;&emsp;<img src="screenshots/newCrimeScreenshot.jpg" width="200">&emsp;&emsp;<img src="screenshots/crimeDetailScreenshot.jpg" width="200">&emsp;&emsp;<img src="screenshots/filledListScreenshot.jpg" width="200">
+<img src="screenshots/emptyListScreenshot.jpg" width="200">&emsp;&emsp;<img src="screenshots/newCrimeScreenshot.jpg" width="200">&emsp;&emsp;<img src="screenshots/crimeDetailScreenshot.jpg" width="200">
 <br/>
 <br/>
-<img src="screenshots/datePickerScreenshot.jpg" width="200">&emsp;&emsp;<img src="screenshots/deleteDialogScreenshot.jpg" width="200">&emsp;&emsp;<img src="screenshots/lightModeScreenshot.jpg" width="200">&emsp;&emsp;<img src="screenshots/spanishScreenshot.jpg" width="200">
+<img src="screenshots/filledListScreenshot.jpg" width="200">&emsp;&emsp;<img src="screenshots/datePickerScreenshot.jpg" width="200">&emsp;&emsp;<img src="screenshots/deleteDialogScreenshot.jpg" width="200">
+<br/>
+<br/>
+<img src="screenshots/lightModeScreenshot.jpg" width="200">&emsp;&emsp;<img src="screenshots/spanishScreenshot.jpg" width="200">
 
 
