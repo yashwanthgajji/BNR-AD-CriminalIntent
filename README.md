@@ -17,3 +17,12 @@
 - Implicit intents to pick a contact, call a contact and taking pictures and storing them in local file storage.
 - Localizing the app for different languages.
 - Adding talkback accessibility for all view items.
+
+## Screenshots
+
+<img src="screenshots/emptyListScreenshot.jpg" width="200">&emsp;&emsp;<img src="screenshots/newCrimeScreenshot.jpg" width="200">&emsp;&emsp;<img src="screenshots/crimeDetailScreenshot.jpg" width="200">&emsp;&emsp;<img src="screenshots/filledListScreenshot.jpg" width="200">
+<br/>
+<br/>
+<img src="screenshots/datePickerScreenshot.jpg" width="200">&emsp;&emsp;<img src="screenshots/deleteDialogScreenshot.jpg" width="200">&emsp;&emsp;<img src="screenshots/lightModeScreenshot.jpg" width="200">&emsp;&emsp;<img src="screenshots/spanishScreenshot.jpg" width="200">
+
+
